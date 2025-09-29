@@ -1,0 +1,2 @@
+text="Marvel"
+print(text)
