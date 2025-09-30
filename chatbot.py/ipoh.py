@@ -89,12 +89,11 @@ def get_gemini_response(prompt):
 
 
     try:
+# THIS IS THE REPLACEMENT/STEP 2: We use genai.configure()
 
-    # THIS IS THE REPLACEMENT/STEP 2: We use genai.configure()
+# instead of trying to create a genai.Client() object.
 
-    # instead of trying to create a genai.Client() object.
-
-    genai.configure(api_key=GOOGLE_API_KEY)
+    genai.configure(api_key="AIzaSyC8Y7q-WlvFrIiRpoD07RzokKJ0PiDh1IE")
 
     except Exception as e:
 
@@ -155,8 +154,7 @@ def show_images(response_text):
     image_path = BASE_DIR / "images" / filename
 
         try:
-
-                # Use str(image_path) to pass the path correctly to st.image
+# Use str(image_path) to pass the path correctly to st.image
 
                 cols[i].image(str(image_path), caption=caption)
 
