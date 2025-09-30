@@ -13,8 +13,12 @@ def main():
 
     # Display chat messages
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+    if message["role"] == "assistant":
+        with st.chat_message("assistant", avatar=robot_img):
+            st.write(f"{message['content']}")
+    else:
+        with st.chat_message("user", avatar=user_emoji):
+            st.write(f"{message['content']}")
 
     # Chat input
     if prompt := st.chat_input("What's on your mind?"):
@@ -37,23 +41,23 @@ if __name__ == "__main__":
 with st.sidebar:
     st.title("Sidebar") 
     #anything added inside this indented section will pop up in the sidebar#
-st.radio("Radio-button select", ["Friendly", "Formal", "Funny"], index=0)
-st.multiselect("Multi-select", ["Movies", "Travel", "Food", "Sports"], default=["Food"])
-st.selectbox("Dropdown select", ["Data", "Code", "Travel", "Food", "Sports"], index=0)
-st.slider("Slider", min_value=1, max_value=200, value=60)
-st.select_slider("Option Slider", options=["Very Sad", "Sad", "Okay", "Happy", "Very Happy"], value="Okay")
-use_emoji = "👤" # Change this to any emojis you like
+        st.radio("Radio-button select", ["Meals", "Accomodation", "Entertainment", "Transportation"], index=0)
+            if st.radio == Meals:
+                st.selectbox("Dropdown select",  ["Western Cuisine", "Chinese Cuisine", "Japanese Cuisine", "Malay Cuisine", "Indian Cuisine", "Thai Cuisine","Italian Cuisine","Others"], default=["  "])
+            elif st.radio == Accomodation:
+                print("Approximate price per night:")
+                st.slider("Slider", min_value=1, max_value=700+, value=1)
+            elif st.radio == Entertainment:
+                print("Take a peek...")
+                st.selectbox("Dropdown select",  ["Shopping Centre","Theme Park and Nature","Culture and History"])
+            else:
+                print("Modes of Transport:")
+                st.selectbox("Dropdown select",  ["Train","Buses","Grab and Taxis"])
+    
+use_emoji = "😁" # Change this to any emojis you like
 robot_img = "robot.jpg" # Find a picture online(jpg/png), download it and drag to
 												# your files under the Chatbot folder
 
-# Replace the section in the code that says "Display chat messages" with this code
-for message in st.session_state.messages:
-    if message["role"] == "assistant":
-        with st.chat_message("assistant", avatar=robot_img):
-            st.write(f"{message['content']}")
-    else:
-        with st.chat_message("user", avatar=user_emoji):
-            st.write(f"{message['content']}")
 
 import streamlit as st
 import google.generativeai as genai
@@ -78,8 +82,12 @@ def main():
 
     # Display chat messages
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+    if message["role"] == "assistant":
+        with st.chat_message("assistant", avatar=robot_img):
+            st.write(f"{message['content']}")
+    else:
+        with st.chat_message("user", avatar=user_emoji):
+            st.write(f"{message['content']}")
 
     # Chat input
     if prompt := st.chat_input("Chat with Gemini"):
