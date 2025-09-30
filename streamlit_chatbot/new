@@ -1,6 +1,0 @@
-import streamlit as st
-import random
-
-st.title("🎲 Number Guessing Game")
-
-st.write("I am thinking of a number between 1 and 20. Can you guess it?")

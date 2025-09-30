@@ -1,154 +1,70 @@
 import streamlit as st
-import pandas as pd
-
-
-def initialize_session_state():
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-def main():
-    with st.sidebar:
-        st.title("Sidebar") 
-    #anything added inside this indented section will pop up in the sidebar#
-        st.radio("Radio-button select", ["Meals", "Accomodation", "Entertainment", "Transportation"], index=0)
-        if st.radio == "Meals":
-                st.selectbox("Dropdown select",  ["Western Cuisine", "Chinese Cuisine", "Japanese Cuisine", "Malay Cuisine", "Indian Cuisine", "Thai Cuisine","Italian Cuisine","Others"], default=["  "])
-        elif st.radio == "Accomodation":
-                print("Approximate price per night:")
-                st.slider("Slider", min_value=1, max_value=700, value=1)
-        elif st.radio == "Entertainment":
-                print("Take a peek...")
-                st.selectbox("Dropdown select",  ["Shopping Centre","Theme Park and Nature","Culture and History"])
-        else:
-                print("Modes of Transport:")
-                st.selectbox("Dropdown select",  ["Train","Buses","Grab and Taxis"])
-    
-
-    st.title("Welcome to Ipoh")
-    print("What do you want to know?")
-    initialize_session_state()
-
-    user_emoji = "😁" # Change this to any emojis you like
-    robot_img = "pikachu.jpg" # Find a picture online(jpg/png), download it and drag to
-												# your files under the Chatbot folder
-
-    # Display chat messages
-    for message in st.session_state.messages:
-        if message["role"] == "assistant":
-            with st.chat_message("assistant", avatar=robot_img):
-                st.write(f"{messages['content']}")
-    else:
-        with st.chat_message("user", avatar=user_emoji):
-            st.write(f"{messages['content']}")
-
-    # Chat input
-    if prompt := st.chat_input("What's on your mind?"):
-        # Display user message
-        with st.chat_message("user"):
-            st.write(prompt)
-        
-        # Add user message to history
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        # Add simple bot response
-        response = f"You said: {prompt}"
-        with st.chat_message("assistant"):
-            st.write(response)
-        
-        st.session_state.messages.append({"role": "assistant", "content": response})
-
-if __name__ == "__main__": 
-    main()
-
-use_emoji = "😁" # Change this to any emojis you like
-robot_img = "robot.jpg" # Find a picture online(jpg/png), download it and drag to
-												# your files under the Chatbot folder
-
-
-
-
-
-
-import streamlit as st
 import google.generativeai as genai
 
-
-
-# Configure Gemini API
-GOOGLE_API_KEY = "AIzaSyC8Y7q-WlvFrIiRpoD07RzokKJ0PiDh1IE"
+# -------------------- API Setup --------------------
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]  # safer way!
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+model = genai.GenerativeModel("gemini-2.5-flash")
 
+# -------------------- Helpers --------------------
 def initialize_session_state():
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-def get_gemini_response(prompt):
-    response = model.generate_content(prompt)
+def get_gemini_response(prompt, persona_instructions=""):
+    full_prompt = f"{persona_instructions}\n\nUser: {prompt}\nAssistant:"
+    response = model.generate_content(full_prompt)
     return response.text
 
-def main():
-    st.title("Gemini AI Chatbot")
-    
-    initialize_session_state()
-
-    # Display chat messages
-    for message in st.session_state.messages:
-        if message["role"] == "assistant":
-            with st.chat_message("assistant", avatar=robot_img):
-                st.write(f"{message['content']}")
-    else:
-        with st.chat_message("user", avatar=user_emoji):
-            st.write(f"{message['content']}")
-
-    # Chat input
-    if prompt := st.chat_input("Chat with Gemini"):
-        # Display user message
-        with st.chat_message("user"):
-            st.write(prompt)
-        
-        # Add user message to history
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        # Get Gemini response
-        def get_gemini_response(prompt, persona_instructions):
-            full_prompt = f"{persona_instructions}\n\nUser: {prompt}\nAssistant:"
-            response = model.generate_content(full_prompt)
-            return response.text
-        
-        # Display assistant response
-        with st.chat_message("assistant"):
-            st.write(response)
-        
-        # Add assistant response to history
-        st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-
+# -------------------- Persona --------------------
 persona_instructions = """
-You are a hilarious roast bot.
-Be playful and witty.
-Your roasts should be light-hearted, never offensive.
-Use funny emojis and sarcasm in your replies.
+You are a friendly Ipoh travel guide for foreigners.  
+- Recommend **meals, accommodation, entertainment, and transportation**.  
+- Use light humor, emojis, and be welcoming.  
+- Keep answers clear and practical.
 """
 
-if prompt := st.chat_input("Chat with Gemini"):
-    # Display user message
-    with st.chat_message("user"):
-        st.write(prompt)
+# -------------------- Main App --------------------
+def main():
+    st.title("🌏 Welcome to Ipoh Travel Guide (Powered by Gemini AI)")
 
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Sidebar
+    with st.sidebar:
+        st.header("Explore Ipoh")
+        category = st.radio("Choose a category", 
+                            ["Meals", "Accommodation", "Entertainment", "Transportation"])
+        
+        if category == "Meals":
+            choice = st.selectbox("Cuisine", 
+                                  ["Western", "Chinese", "Japanese", "Malay", "Indian", "Thai", "Italian", "Others"])
+            st.write(f"You’re curious about {choice} food 🍽️")
+        elif category == "Accommodation":
+            price = st.slider("Approximate price per night (RM)", 50, 700, 200)
+            st.write(f"Looking for stays around RM {price}/night 🏨")
+        elif category == "Entertainment":
+            activity = st.selectbox("Pick one", 
+                                    ["Shopping", "Theme Park & Nature", "Culture & History"])
+            st.write(f"Great! You like {activity} 🎉")
+        else:
+            transport = st.selectbox("Transport", ["Train", "Bus", "Grab/Taxi"])
+            st.write(f"You prefer {transport} 🚖")
 
-    # Get Gemini response with persona
-    response = get_gemini_response(prompt, persona_instructions)
+    # Chatbot
+    st.subheader("💬 Chat with Ipoh AI Guide")
+    initialize_session_state()
 
-    # Display assistant response
-    with st.chat_message("assistant"):
-        st.write(response)
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
 
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    if prompt := st.chat_input("Ask me anything about Ipoh..."):
+        st.chat_message("user").write(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
+        response = get_gemini_response(prompt, persona_instructions)
+        st.chat_message("assistant").write(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})
 
-
+# -------------------- Run --------------------
 if __name__ == "__main__":
     main()
